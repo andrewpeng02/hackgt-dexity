@@ -1,6 +1,6 @@
 const OverviewPage = () => (
   <div>
-    <p>Overview page</p>
+    <p className="font-bold">Overview page</p>
   </div>
 );
 
