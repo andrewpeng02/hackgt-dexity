@@ -17,7 +17,7 @@ const plaidClient = new PlaidApi(config);
 export const getTransactionData = async (accessToken) => {
   const transactionResponse = await plaidClient.transactionsGet({
     access_token: accessToken,
-    start_date: '2021'+(new Date()).toJSON().slice(5, 10),
+    start_date: '2021'+(new Date()).toJSON().slice(4, 10),
     end_date: (new Date()).toJSON().slice(0, 10)
   })
     console.log(tokenResponse.data);
