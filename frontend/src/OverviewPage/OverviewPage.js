@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts"
@@ -15,6 +16,49 @@ const OverviewPage = () => {
   }
   // eslint-disable-next-line no-unused-vars
   const [user, loading] = useAuthState(auth)
+=======
+import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { PieChart, Pie, Tooltip } from "recharts";
+import { auth } from "../firebase";
+import PlaidLink from "../PlaidLink/PlaidLink";
+
+const isPlaidVerified = async () => {
+  const idToken = await auth.currentUser.getIdToken(true);
+  const res = await fetch("/me", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `bearer ${idToken}`,
+    },
+  });
+  const j = await res.json();
+  
+  return j.success;
+};
+
+const OverviewPage = () => {
+  // eslint-disable-next-line no-unused-vars
+  const [user, loading] = useAuthState(auth);
+  const [loading2, setLoading2] = useState(false);
+  const [plaidVerified, setPlaidVerified] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading2(true);
+
+      const res = await isPlaidVerified();
+      setPlaidVerified(res);
+
+      setLoading2(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading || loading2) return <p>Loading</p>;
+
+  if (!plaidVerified) return <PlaidLink />;
+>>>>>>> 5fd18ba94968241a37014a9afe2d1457d05a46ce
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <div className="relative fixed py-5 px-4 flex justify-between items-center bg-white">
