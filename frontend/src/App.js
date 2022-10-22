@@ -8,6 +8,8 @@ import LandingPage from "./LandingPage/LandingPage";
 import OverviewPage from "./OverviewPage/OverviewPage";
 import PageNotFoundPage from "./PageNotFoundPage/PageNotFoundPage";
 import { auth } from "./firebase";
+import RootSidebarPage from "./RootSidebarPage/RootSidebarPage";
+import CompaniesPage from "./CompaniesPage/CompaniesPage";
 
 const AuthenticatedRoute = ({ authenticated, children }) => {
   const location = useLocation();
@@ -28,13 +30,25 @@ const MyRoutes = () => {
     <Routes>
       <Route
         path="/"
-        element={authenticated ? <OverviewPage /> : <LandingPage />}
+        element={
+          authenticated ? (
+            <div className="flex h-full">
+              <RootSidebarPage selectedIndex={0} />
+              <OverviewPage />
+            </div>
+          ) : (
+            <LandingPage />
+          )
+        }
       />
       <Route
         path="companies"
         element={
-          <AuthenticatedRoute auth={auth}>
-            <p>companies</p>
+          <AuthenticatedRoute authenticated={authenticated}>
+            <div className="flex h-full">
+              <RootSidebarPage selectedIndex={1} />
+              <CompaniesPage />
+            </div>
           </AuthenticatedRoute>
         }
       />
@@ -67,7 +81,7 @@ const MyRoutes = () => {
 const App = () => (
   // const [alert, setAlert] = useState(null);
 
-  <div>
+  <div className="h-full">
     <MyRoutes />
     {/* <SimpleSnackBar alert={alert} setAlert={setAlert} /> */}
   </div>
