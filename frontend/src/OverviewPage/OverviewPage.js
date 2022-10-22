@@ -1,11 +1,15 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { PieChart, Pie, Tooltip } from "recharts";
 import { auth } from "../firebase";
+import PlaidLink from "../PlaidLink/PlaidLink";
 
 const OverviewPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [user, loading] = useAuthState(auth);
-
+  const isPlaidNeeded = true;
+  if (isPlaidNeeded) {
+    return <PlaidLink />;
+  }
   return (
     <div>
       <PieChart width={730} height={250}>
