@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { PieChart, Pie, Tooltip } from "recharts"
+import { PieChart, Pie, Tooltip } from "recharts";
 import { auth } from "../firebase";
 import PlaidLink from "../PlaidLink/PlaidLink";
 
