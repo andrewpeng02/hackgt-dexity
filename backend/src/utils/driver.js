@@ -2,7 +2,7 @@ import { User } from "../app/models.js";
 import { getTransactionData } from "./plaidApiUtils.js";
 
 const createUser = async (uid, accessToken) => {
-  const existingUser = User.findOne({ firebaseId: uid });
+  const existingUser = await User.findOne({ firebaseId: uid });
   if (existingUser) {
     console.log("User already exists");
     return;
