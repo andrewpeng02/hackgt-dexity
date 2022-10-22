@@ -6,7 +6,7 @@ import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
 import { readFile } from "fs/promises";
-import { createUser } from "./app/driver.js";
+import { createUser } from "./utils/driver.js";
 
 envConfig();
 
