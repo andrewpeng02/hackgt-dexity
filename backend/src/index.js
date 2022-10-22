@@ -7,6 +7,7 @@ import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
 import { readFile } from "fs/promises";
 import { createUser } from "./utils/driver.js";
+import { User } from "./app/models.js";
 
 envConfig();
 
@@ -85,4 +86,20 @@ app.post("/api/exchange_public_token", async (req, res) => {
   await createUser(uid, accessToken);
 
   res.json(true);
+});
+
+// returns if user exists and has plaid key
+app.get("/me", async (req, res) => {
+  const idToken = req.get("Authorization").substring(7);
+  const uid = await assertAuthenticated(idToken);
+  if (!uid) {
+    return res.json({ success: false });
+  }
+
+  const existingUser = await User.findOne({ firebaseId: uid });
+  if (!existingUser) {
+    return res.json({ success: false });
+  }
+
+  return res.json({ success: true });
 });

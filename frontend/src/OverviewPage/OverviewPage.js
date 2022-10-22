@@ -1,16 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { PieChart, Pie, Tooltip } from "recharts";
 import { auth } from "../firebase";
 import PlaidLink from "../PlaidLink/PlaidLink";
 
+const isPlaidVerified = async () => {
+  const idToken = await auth.currentUser.getIdToken(true);
+  const res = await fetch("/me", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `bearer ${idToken}`,
+    },
+  });
+  const j = await res.json();
+  
+  return j.success;
+};
+
 const OverviewPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [user, loading] = useAuthState(auth);
-  const isPlaidNeeded = true;
-  if (isPlaidNeeded) {
-    return <PlaidLink />;
-  }
+  const [loading2, setLoading2] = useState(false);
+  const [plaidVerified, setPlaidVerified] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading2(true);
+
+      const res = await isPlaidVerified();
+      setPlaidVerified(res);
+
+      setLoading2(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading || loading2) return <p>Loading</p>;
+
+  if (!plaidVerified) return <PlaidLink />;
   return (
     <div className="bg-[#F7F8FC]">
       <PieChart width={730} height={250}>
