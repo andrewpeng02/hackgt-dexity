@@ -20,6 +20,6 @@ export const getTransactionData = async (accessToken) => {
     start_date: '2021'+(new Date()).toJSON().slice(4, 10),
     end_date: (new Date()).toJSON().slice(0, 10)
   })
-    console.log(tokenResponse.data);
-    res.json(tokenResponse.data);
+    console.log(transactionResponse.data);
+    res.json(transactionResponse.data);
 }
