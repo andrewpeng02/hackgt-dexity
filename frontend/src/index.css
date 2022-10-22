@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Avenir";
+    font-weight: 400;
+    src: url(../public/fonts/AvenirNextLTPro-Regular.otf);
+  }
+
+  @font-face {
+    font-family: "Avenir";
+    font-weight: 700;
+      src: url(../public/fonts/AvenirNextLTPro-Bold.otf);
+  }
+
+  @font-face {
+    font-family: "Avenir";
+    font-style: italic;
+      src: url(../public/fonts/AvenirNextLTPro-It.otf),
+  }
+}

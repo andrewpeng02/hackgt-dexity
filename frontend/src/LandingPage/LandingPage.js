@@ -30,12 +30,36 @@ const LoginPopup = () => (
     />
   </div>
 );
+
+const Header = () => (
+  <div className="py-5 px-4 flex justify-between items-center">
+    <h1 className="font-bold">Dexity</h1>
+    <div>
+      <button
+        type="button"
+        className="w-24 h-8 bg-orange text-white rounded-[20px] mr-4"
+      >
+        Sign Up
+      </button>
+      <button
+        type="button"
+        className="w-24 h-8 bg-green text-white rounded-[20px]"
+      >
+        Log In
+      </button>
+    </div>
+  </div>
+);
+
 const LandingPage = () => {
   // eslint-disable-next-line no-unused-vars
-  const [showLogin, setShowLogin] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
+
   return (
     <div>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
+      <Header />
+
       <p>Landing page</p>
     </div>
   );
