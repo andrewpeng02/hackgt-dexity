@@ -17,28 +17,25 @@ const uiConfig = {
   ],
 };
 
-const LoginPopup = () => 
+const LoginPopup = () => (
   // useEffect(() => {
   //   document.getElementById("app").style.overflow = "hidden";
   // }, []);
-   (
-    <div>
-      <h1>Log in or Sign up</h1>
-      <StyledFirebaseAuth
-        uiConfig={uiConfig}
-        firebaseAuth={app.auth()}
-        uiCallback={null}
-      />
-    </div>
-  )
-;
-
+  <div>
+    <h1>Log in or Sign up</h1>
+    <StyledFirebaseAuth
+      uiConfig={uiConfig}
+      firebaseAuth={app.auth()}
+      uiCallback={null}
+    />
+  </div>
+);
 const LandingPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [showLogin, setShowLogin] = useState(true);
   return (
     <div>
-      <LoginPopup setShowLogin={setShowLogin} />
+      {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
       <p>Landing page</p>
     </div>
   );

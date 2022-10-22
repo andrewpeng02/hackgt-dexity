@@ -20,7 +20,9 @@ const AuthenticatedRoute = ({ authenticated, children }) => {
 };
 
 const MyRoutes = () => {
-  const [authenticated] = useAuthState(auth);
+  const [authenticated, loading] = useAuthState(auth);
+
+  if (loading) return <div>Loading</div>;
 
   return (
     <Routes>
