@@ -25,5 +25,6 @@ module.exports = {
       },
     ],
     "react/prop-types": "off",
+    "import/no-extraneous-dependencies": "off",
   },
 };

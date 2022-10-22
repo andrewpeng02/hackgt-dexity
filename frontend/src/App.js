@@ -1,16 +1,18 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 // import SnackBar from "@mui/material/Snackbar";
 // import { Alert } from "@mui/material";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 // import { useState } from "react";
 import LandingPage from "./LandingPage/LandingPage";
 import OverviewPage from "./OverviewPage/OverviewPage";
 import PageNotFoundPage from "./PageNotFoundPage/PageNotFoundPage";
+import { auth } from "./firebase";
 
-const AuthenticatedRoute = ({ auth, children }) => {
+const AuthenticatedRoute = ({ authenticated, children }) => {
   const location = useLocation();
 
-  if (auth) {
+  if (authenticated) {
     return children;
   }
 
@@ -18,11 +20,14 @@ const AuthenticatedRoute = ({ auth, children }) => {
 };
 
 const MyRoutes = () => {
-  const auth = false;
+  const [authenticated] = useAuthState(auth);
 
   return (
     <Routes>
-      <Route path="/" element={auth ? <OverviewPage /> : <LandingPage />} />
+      <Route
+        path="/"
+        element={authenticated ? <OverviewPage /> : <LandingPage />}
+      />
       <Route
         path="companies"
         element={
