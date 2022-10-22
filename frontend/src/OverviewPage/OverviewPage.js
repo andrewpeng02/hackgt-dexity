@@ -14,15 +14,18 @@ const isPlaidVerified = async () => {
     },
   });
   const j = await res.json();
-  
+
   return j.success;
 };
+export { isPlaidVerified }
 
 const OverviewPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [user, loading] = useAuthState(auth);
   const [loading2, setLoading2] = useState(false);
   const [plaidVerified, setPlaidVerified] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,13 +35,14 @@ const OverviewPage = () => {
       setPlaidVerified(res);
 
       setLoading2(false);
+      setRefresh(false);
     };
     fetchData();
-  }, []);
+  }, [refresh]);
 
   if (loading || loading2) return <p>Loading</p>;
 
-  if (!plaidVerified) return <PlaidLink />;
+  if (!plaidVerified) return <PlaidLink setPlaidVerified={setPlaidVerified} />;
   return (
     <div className="bg-[#F7F8FC]">
       <PieChart width={730} height={250}>

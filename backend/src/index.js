@@ -84,6 +84,7 @@ app.post("/api/exchange_public_token", async (req, res) => {
 
   // create new user
   await createUser(uid, accessToken);
+  await new Promise((r) => setTimeout(r, 2000));
 
   res.json(true);
 });
