@@ -15,7 +15,6 @@ const config = new Configuration({
 const plaidClient = new PlaidApi(config);
 
 export const getTransactionData = async (accessToken) => {
-    const accessToken = findAccessTokenByFirebaseId(firebaseID);
   const transactionResponse = await plaidClient.transactionsGet({
     access_token: accessToken,
     start_date: '2021'+(new Date()).toJSON().slice(5, 10),
