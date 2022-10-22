@@ -1,6 +1,6 @@
 import fetch from "node-fetch"
 
-/*const sampleResponse = {
+const sampleResponse = {
     "accounts": [
         {
             "account_id": "BxBXxLj1m4HMXBm9WZZmCWVbPjX16EHwv99vp",
@@ -86,19 +86,11 @@ import fetch from "node-fetch"
     },
     "total_transactions": 1,
     "request_id": "45QSn"
-}*/
+}
   
-    /*getTransacData(sampleResponse).then((value) => {
-        //console.log(value);
-        let tickers = []
-        for (let x in value) {
-            tickers.push(value[x]["ticker"])
-        }
-
-        getStockData(tickers).then((value1) => {
-                console.log(value1);
-        })
-    })*/
+    getTransacData(sampleResponse).then((value) => {
+        console.log(value);
+    })
   
     async function getTransacData(response) {
         let merchantToDollars = []
@@ -123,18 +115,19 @@ import fetch from "node-fetch"
               merchantToDollars.push({"ticker":ticker, "category":category, "name":transac.merchant_name, "amount":transac.amount})
             }
         }
-        return merchantToDollars
+        return getStockData(merchantToDollars)
     }
   
-async function getStockData(tickers) {
-    let tickerToStocks = []
+async function getStockData(inputs) {
+    let totalOutput = []
     let response
     let data
     let data2
     let data3
     const API_KEY = "ad437953e6e888808a7a29140dcf2ab7"
-    for (let tick in tickers) {
-        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${tickers[tick]}`)
+    for (let input in inputs) {
+        input = inputs[input]
+        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${input["ticker"]}`)
         data = await response.json()
       
         let dateObj = new Date();
@@ -144,27 +137,22 @@ async function getStockData(tickers) {
         dateObj.setDate(dateObj.getDate() - 29)
         let monthBefore = dateObj.toJSON().slice(0,10)
       
-        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${tickers[tick]}&date_from=${yesterdayDate}&date_to=${currDate}`)
+        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${input["ticker"]}&date_from=${yesterdayDate}&date_to=${currDate}`)
         data2 = await response.json()
   
-        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${tickers[tick]}&date_from=${monthBefore}&date_to=${currDate}`)
+        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${input["ticker"]}&date_from=${monthBefore}&date_to=${currDate}`)
         data3 = await response.json()
-        
-        //console.log(data2)
-        // console.log("BREAKKKKKKKKKKKKKKKKKKKK")
-        // console.log(data["data"])
+    
         let currData = data["data"][0]["close"]
         let yestData = data2["data"][data2["data"].length - 1]["close"]
         let monthData = data3["data"][data3["data"].length - 1]["close"]
-        //console.log(data["data"][0])
-        //console.log(data2["data"][0])
-        //console.log(data3["data"][0])
   
-        let yestPercent = yestData/currData * 100.0
-        let monthPercent = monthData/currData * 100.0
+        let yestPercent = Math.round(yestData/currData * 10000.0) / 100.0
+        let monthPercent = Math.round(monthData/currData * 10000.0) / 100.0
   
-        tickerToStocks.push({"ticker":tickers[tick], "currData":currData, "yestPercent":yestPercent, "monthPercent":monthPercent})
+        totalOutput.push({"ticker":input["ticker"], "category":input["category"], "name":input["name"], "amount":input["amount"],
+                            "currentPrice":currData, "yesterdayPercent":yestPercent, "monthPercent":monthPercent})
     }
       
-    return tickerToStocks
+    return totalOutput
 }
