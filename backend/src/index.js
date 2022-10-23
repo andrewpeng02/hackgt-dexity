@@ -44,7 +44,7 @@ const config = new Configuration({
 
 const plaidClient = new PlaidApi(config);
 
-app.get("/api/create_link_token", async (req, res) => {
+app.post("/api/create_link_token", async (req, res) => {
   const tokenResponse = await plaidClient.linkTokenCreate({
     user: { client_user_id: "blahblah" },
     client_name: "Dexity",
