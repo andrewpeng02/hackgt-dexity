@@ -36,11 +36,13 @@ function getSectorDetails(givenData) {
             }
         } 
     }
-    //Sort and Cut 
+    //Sort and Map 
 
     output.sort(function(a, b) {
-        return parseFloat(b["amount"]) - parseFloat(a["amount"]);
+        return parseFloat(b["capital"]) - parseFloat(a["capital"]);
     })
+    output.map((x) => ({"name":x["name"], "capital":x["capital"], "biggestCompany":x["biggestCompany"]}))
+    return output
 }
 
 function getSectorInvestments(givenData) {
@@ -59,15 +61,15 @@ function getSectorInvestments(givenData) {
     }
     for(let i of lists){
         i.sort(function(a, b) {
-            return parseFloat(b["amount"]) - parseFloat(a["amount"]);
+            return parseFloat(b["capital"]) - parseFloat(a["capital"]);
         })
-        i.slice(2)
+        i = i.slice(2)
     }
     for (let i in categories) {
         let category = categories[i]["category"]
         output.push({"category":category, "topComps":lists[i]})
     }
-    
+    return output
 }
 
 
