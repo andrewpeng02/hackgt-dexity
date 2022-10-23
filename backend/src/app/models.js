@@ -14,11 +14,11 @@ const stockSchema = new mongoose.Schema({
   name: String,
   category: String,
   price: Number,
-  dayBefore: Number,
-  monthBefore: Number,
+  percentDayBefore: Number,
+  percentMonthBefore: Number,
 });
 
 const User = mongoose.model("User", userSchema);
-const Stock = mongoose.model("Stock", userSchema);
+const Stock = mongoose.model("Stock", stockSchema);
 
 export { User, Stock };

@@ -6,8 +6,10 @@ import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
 import { readFile } from "fs/promises";
-import { createUser } from "./utils/driver.js";
-import { User } from "./app/models.js";
+import { upsertUser } from "./utils/driver.js";
+import { User, Stock } from "./app/models.js";
+import { getTransactionData } from "./utils/plaidApiUtils.js";
+import { getOwnedStockData } from "./TransactionMethods.js";
 
 envConfig();
 
@@ -82,9 +84,40 @@ app.post("/api/exchange_public_token", async (req, res) => {
 
   const accessToken = exchangeResponse.data.access_token;
 
+  //initialize stock data for user
+  const plaidTransactionData = await getTransactionData(accessToken)
+  // console.log(plaidTransactionData)
+  const stockTransactionData = await getOwnedStockData(plaidTransactionData)
+  console.log("Stock Transaction Data (index.js): ", stockTransactionData)
+
+  const ownedStocks = stockTransactionData.map(async (stockDatum) => {
+    let matchingStock = await Stock.findOne({ticker : stockDatum.ticker});
+    if (matchingStock) {
+      matchingStock.price = stockDatum.price;
+      matchingStock.percentDayBefore = stockDatum.percentDayBefore
+      matchingStock.percentMonthBefore = stockDatum.percentMonthBefore
+    } else {
+      const newStock = new Stock({
+        ticker: stockDatum.ticker,
+        name: stockDatum.name,
+        category: stockDatum.category,
+        price: stockDatum.price,
+        percentDayBefore : stockDatum.percentDayBefore,
+        percentMonthBefore : stockDatum.percentMonthBefore
+      })
+      matchingStock = newStock;
+    }
+    console.log(matchingStock)
+    await matchingStock.save();
+
+    return {
+      tickerId: matchingStock._id,
+      amount: stockDatum.amount
+    }
+  });
+
   // create new user
-  await createUser(uid, accessToken);
-  await new Promise((r) => setTimeout(r, 2000));
+  await upsertUser(uid, accessToken, ownedStocks);
 
   res.json(true);
 });
@@ -186,4 +219,16 @@ app.get("/test", async (req, res) => {
       },
     ],
   });
+});
+
+
+app.get("/api/get_stock_data", async (req, res) => {
+  const idToken = req.get("Authorization").substring(7);
+  const uid = await assertAuthenticated(idToken);
+  if (!uid) {
+    return res.json({ success: false });
+  }
+
+  const existingUser = await User.findOne({ firebaseId: uid }).populate('ownedStocks.tickerId');
+  res.json(existingUser.ownedStocks);
 });
