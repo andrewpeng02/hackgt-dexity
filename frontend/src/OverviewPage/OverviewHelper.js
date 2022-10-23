@@ -16,14 +16,15 @@ function getSectorDetails(givenData) {
     for (let category of givenData["categoryWeights"]) {
         categories.push({"category":category.name, "capital":0, "biggestCompany":null, "bigAmount":-1})
     }
+    console.log(givenData)
     for (let i of givenData["ownedStocks"]) {
-        let category = i["tickerID"]["category"]
+        let category = i["tickerId"]["category"]
         let index = categories.indexOf(category)
         if (index > -1) {
-            let amount = (i["tickerID"]["price"] * i["amount"])
+            let amount = (i["tickerId"]["price"] * i["amount"])
             categories[index]["capital"] += amount
             if (categories[index]["bigAmount"] < amount) {
-                categories[index]["biggestCompany"] = i["tickerID"]["name"]
+                categories[index]["biggestCompany"] = i["tickerId"]["name"]
                 categories[index]["bigAmount"] = amount
             }
         } 
@@ -46,9 +47,9 @@ function getSectorInvestments(givenData) {
     let lists = [[], [], [], [], []]
 
     for (let i of givenData["ownedStocks"]) {
-        let temp = categories.indexOf(i["tickerID"]["category"])
+        let temp = categories.indexOf(i["tickerId"]["category"])
         if (temp >= 0) {
-            lists[temp].push({"name":i["tickerID"]["category"], "capital":(i["tickerID"]["price"] * i["amount"])})
+            lists[temp].push({"name":i["tickerId"]["category"], "capital":(i["tickerId"]["price"] * i["amount"])})
         }
     }
     for(let i of lists){
