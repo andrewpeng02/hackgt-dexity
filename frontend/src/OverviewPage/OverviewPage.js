@@ -75,8 +75,8 @@ const OverviewPage = () => {
     const fetchData = async () => {
       setLoading2(true);
 
-      const res = await isPlaidVerified();
-      setPlaidVerified(res);
+      //const res = await isPlaidVerified();
+      setPlaidVerified(true);
 
       setLoading2(false);
       setRefresh(false);
@@ -91,7 +91,7 @@ const OverviewPage = () => {
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <Header user={user} text="Portfolio" />
-      <div className="items-center mt-[4%] overflow-visible">
+      <div className="items-center mt-[2%] overflow-visible">
         <div className="flex justify-between text-justify mx-[8%]">
           <div className="relative flex justify-between w-[334px] h-[95px] bg-darkBlue">
             <p className="text-white font-semibold text-[20px] px-[25px] pt-[20px]">

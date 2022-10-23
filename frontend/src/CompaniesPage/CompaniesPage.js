@@ -12,6 +12,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 
 import { Header } from "../OverviewPage/OverviewPage";
+import CompaniesTable from "./CompaniesTable";
 
 const data = [
   { name: "Q3 2021", price: 30 },
@@ -30,10 +31,10 @@ const biggestCompanies = [
 const BiggestCompaniesTile = ({ name, price }) => (
   <div
     className="bg-white flex justify-between px-[17px] items-center 
-                    w-[350px] h-[80px] rounded-[8px] mb-[10px]"
+                    w-[100%] h-[80px] rounded-[8px] mb-[10px]"
   >
-    <p className="font-bold text-[24px] text-[#242424]">{name}</p>
-    <p className="font-bold text-[24px] text-[#565656]">{price}</p>
+    <p className="font-semibold text-[24px] text-[#242424]">{name}</p>
+    <p className="font-semibold text-[24px] text-[#565656]">{price}</p>
   </div>
 );
 
@@ -46,7 +47,7 @@ const CompaniesPage = () => {
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <Header user={user} text="Companies" />
       <div className="grid grid-cols-2 mx-[8%] mt-[15px]">
-        <div className="bg-white mr-4">
+        <div className="bg-white px-[5px] py-[8px] mr-4">
           <h2 className="font-semibold text-[24px] m-4">Total Stock Growth</h2>
           <ResponsiveContainer aspect={1.5} maxHeight={300}>
             <AreaChart
@@ -77,6 +78,12 @@ const CompaniesPage = () => {
             <BiggestCompaniesTile name={c.name} price={c.price} key={c.name} />
           ))}
         </div>
+      </div>
+      <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
+          <p className="text-black font-semibold ml-[0%] pb-[15px]">Companies by Investment Volume</p>
+      </div>
+      <div className="bg-white px-[20px] mx-[8%] py-[1%] mb-[5%]">
+        <CompaniesTable />
       </div>
     </div>
   );
