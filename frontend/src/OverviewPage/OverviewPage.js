@@ -81,8 +81,8 @@ const OverviewPage = () => {
     const fetchData = async () => {
       setLoading2(true);
 
-      //const res = await isPlaidVerified();
-      setPlaidVerified(true);
+      const res = await isPlaidVerified();
+      setPlaidVerified(res);
 
       setLoading2(false);
       setRefresh(false);
