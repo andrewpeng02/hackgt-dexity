@@ -84,6 +84,7 @@ app.post("/api/exchange_public_token", async (req, res) => {
 
   // create new user
   await createUser(uid, accessToken);
+  await new Promise((r) => setTimeout(r, 2000));
 
   res.json(true);
 });
@@ -102,4 +103,86 @@ app.get("/me", async (req, res) => {
   }
 
   return res.json({ success: true });
+});
+
+app.get("/test", async (req, res) => {
+  return {
+    categoryWeights: [
+      {
+        Technology: 0.2,
+        "Financial Services": 0.2,
+        Industrials: 0.2,
+        "Basic Materials": 0.2,
+        Energy: 0.2,
+      },
+    ],
+    ownedStocks: [
+      {
+        amount: 2.3,
+        tickerId: {
+          ticker: "AAPL",
+          name: "Apple Inc.",
+          category: "Technology",
+          price: 423.1,
+          percentDayBefore: 0.32,
+          percentMonthBefore: 10.32,
+        },
+      },
+      {
+        amount: 10,
+        tickerId: {
+          ticker: "AMD",
+          name: "Advanced Micro Devices",
+          category: "Technology",
+          price: 4.03,
+          percentDayBefore: 0.1,
+          percentMonthBefore: 12,
+        },
+      },
+      {
+        amount: 10,
+        tickerId: {
+          ticker: "PLD",
+          name: "Plaid",
+          category: "Financial Services",
+          price: 23,
+          percentDayBefore: -0.5,
+          percentMonthBefore: 2.32,
+        },
+      },
+      {
+        amount: 1,
+        tickerId: {
+          ticker: "KMB",
+          name: "Kimberly Clark",
+          category: "Industrials",
+          price: 113.96,
+          percentDayBefore: 1.42,
+          percentMonthBefore: 10.32,
+        },
+      },
+      {
+        amount: 100,
+        tickerId: {
+          ticker: "SHW",
+          name: "The Sherwin-Williams Company",
+          category: "Basic Materials",
+          price: 207.82,
+          percentDayBefore: -1,
+          percentMonthBefore: -4.32,
+        },
+      },
+      {
+        amount: 5,
+        tickerId: {
+          ticker: "XOM",
+          name: "Exxon Mobil Corp",
+          category: "Energy",
+          price: 105.86,
+          percentDayBefore: 1.88,
+          percentMonthBefore: 2.4,
+        },
+      },
+    ],
+  };
 });

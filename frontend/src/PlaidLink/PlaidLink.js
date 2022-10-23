@@ -3,7 +3,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { usePlaidLink } from "react-plaid-link";
 import { auth } from "../firebase";
 
-const PlaidLink = () => {
+const PlaidLink = ({ setRefresh, setLoading2 }) => {
   const [token, setToken] = useState(null);
   const [, setData] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
@@ -30,6 +30,7 @@ const PlaidLink = () => {
   const onSuccess = useCallback(
     async (publicToken) => {
       setLoading(true);
+      setLoading2(true);
       console.log(publicToken);
 
       const idToken = await auth.currentUser.getIdToken(true);
@@ -45,6 +46,9 @@ const PlaidLink = () => {
       });
       const aT = await response.json();
       console.log("from App: ", aT);
+
+      setRefresh(true); // move to end of function later
+
       setAccessToken(aT);
       await getTransactions();
     },

@@ -81,7 +81,6 @@ const fakeData = [
 function SectorTable() {
     return (
       <div>
-          {/* <Paper> */}
             <DataTable
               customStyles={customStyles}
               columns={columns}
@@ -90,7 +89,6 @@ function SectorTable() {
               sortIcon={<SortIcon />}
               striped
             />
-          {/* </Paper> */}
         </div>
     )
    }
