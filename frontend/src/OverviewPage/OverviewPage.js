@@ -108,19 +108,17 @@ const OverviewPage = () => {
   }, []);
 
   if (loading || loading2 || !data) return <p>Loading</p>;
-  console.log(data);
   const sectorBreakdowns = getSectorBreakdowns(data);
-  console.log(sectorBreakdowns);
   const sectorDetails = getSectorDetails(data);
-  console.log(sectorDetails);
   const sectorInvestments = getSectorInvestments(data);
-  console.log(sectorInvestments);
 
   if (!plaidVerified)
     return (
       <div className="flex justify-center items-center w-full">
         <div className="flex-row items-center justify-center border-2 border-gray rounded-md p-5">
-          <h1 className="text-center font-semibold mb-2">Link your bank account to Plaid</h1>
+          <h1 className="text-center font-semibold mb-2">
+            Link your bank account to Plaid
+          </h1>
           <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />
         </div>
       </div>
@@ -183,7 +181,7 @@ const OverviewPage = () => {
             Sector Details
           </p>
           <div className="pb-[5%]">
-            <SectorTable />
+            <SectorTable data={sectorDetails} />
           </div>
         </div>
       </div>
@@ -193,27 +191,33 @@ const OverviewPage = () => {
         </p>
       </div>
       <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
-        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+        {sectorInvestments.slice(0, 3).map((i) => (
+          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+            <p>{i.category}</p>
+            <BreakdownTable data={i.topComps} />
+          </div>
+        ))}
+        {/* <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
           <p>Consumer Staples</p>
-          <BreakdownTable />
+          <BreakdownTable data={sectorInvestments[0]} />
         </div>
         <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
           <p>Financials</p>
-          <BreakdownTable />
+          <BreakdownTable data={sectorInvestments[1]} />
         </div>
         <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
           <p>Energy</p>
-          <BreakdownTable />
-        </div>
+          <BreakdownTable data={sectorInvestments[2]} />
+        </div> */}
       </div>
       <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
         <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-          <p>Utilities</p>
-          <BreakdownTable />
+          <p>{sectorInvestments[3].category}</p>
+          <BreakdownTable data={sectorInvestments[3].topComps} />
         </div>
         <div className="bg-white pb-[3%] pt-[10px] px-[2%] mr-[34%]">
-          <p>Technology</p>
-          <BreakdownTable />
+          <p>{sectorInvestments[4].category}</p>
+          <BreakdownTable data={sectorInvestments[4].topComps} />
         </div>
       </div>
     </div>
