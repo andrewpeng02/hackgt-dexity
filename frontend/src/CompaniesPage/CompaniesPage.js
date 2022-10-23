@@ -14,6 +14,7 @@ import { auth } from "../firebase";
 
 import { Header } from "../OverviewPage/OverviewPage";
 import CompaniesTable from "./CompaniesTable";
+import { getCompanyDetails, trimCompanies } from "./CompaniesHelper";
 
 const dataex = [
   { name: "Q3 2021", price: 30 },
@@ -21,12 +22,6 @@ const dataex = [
   { name: "Q1 2022", price: 65 },
   { name: "Q2 2022", price: 80 },
   { name: "Q3 2022", price: 100 },
-];
-
-const biggestCompanies = [
-  { name: "Apple", price: "$1811" },
-  { name: "Walmart", price: "$614" },
-  { name: "PG&E", price: "$288" },
 ];
 
 const BiggestCompaniesTile = ({ name, price }) => (
@@ -61,6 +56,10 @@ const CompaniesPage = () => {
   }, []);
 
   if (loading || !data) return <p>Loading</p>;
+  const companyDetails = getCompanyDetails(data);
+  const biggestCompanies = trimCompanies(companyDetails);
+  console.log(companyDetails);
+  console.log(biggestCompanies);
 
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
@@ -94,15 +93,21 @@ const CompaniesPage = () => {
         <div>
           <p className="font-semibold text-[18px] mb-2">Biggest Companies</p>
           {biggestCompanies.map((c) => (
-            <BiggestCompaniesTile name={c.name} price={c.price} key={c.name} />
+            <BiggestCompaniesTile
+              name={c.name}
+              price={c.capital}
+              key={c.name}
+            />
           ))}
         </div>
       </div>
       <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
-          <p className="text-black font-semibold ml-[0%] pb-[15px]">Companies by Investment Volume</p>
+        <p className="text-black font-semibold ml-[0%] pb-[15px]">
+          Companies by Investment Volume
+        </p>
       </div>
       <div className="bg-white px-[20px] mx-[8%] py-[1%] mb-[5%]">
-        <CompaniesTable />
+        <CompaniesTable data={companyDetails} />
       </div>
     </div>
   );

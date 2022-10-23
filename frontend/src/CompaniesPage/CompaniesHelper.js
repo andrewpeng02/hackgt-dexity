@@ -7,24 +7,31 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-restricted-syntax */
 function getCompanyDetails(givenData) {
-    let output = []
-    for (let i of givenData["ownedStocks"]) {
-        output.push({"name":i["tickerId"]["name"],
-                "ticker":i["tickerId"]["ticker"],
-                "capital":(i["tickerId"]["price"] * i["amount"]),
-                "date":null,
-                "percentDayChange":i["tickerId"]["percentDayBefore"],
-                "percentMonthChange":i["tickerId"]["percentMonthBefore"],
-                "totalGrowth":null
-        })
-    }
-    output.sort(function(a, b) {
-        return parseFloat(b["capital"]) - parseFloat(a["capital"]);
-    })
-    return output
+  let output = [];
+  for (let i of givenData["ownedStocks"]) {
+    output.push({
+      name: i["tickerId"]["name"],
+      ticker: i["tickerId"]["ticker"],
+      capital: i["tickerId"]["price"] * i["amount"],
+      date: null,
+      percentDayChange: i["tickerId"]["percentDayBefore"],
+      percentMonthChange: i["tickerId"]["percentMonthBefore"],
+      totalGrowth: null,
+    });
+  }
+  output.sort(function (a, b) {
+    return parseFloat(b["capital"]) - parseFloat(a["capital"]);
+  });
+  return output;
 }
 
 function trimCompanies(givenData) {
-    givenData = givenData.slice(2)
-    givenData.map((x) => ({"name":x["name"], "capital":x["capital"], "percentDayChange":x["percentDayChange"]}))
+  givenData = givenData.slice(0, 3);
+  return givenData.map((x) => ({
+    name: x["name"],
+    capital: x["capital"],
+    percentDayChange: x["percentDayChange"],
+  }));
 }
+
+export { getCompanyDetails, trimCompanies };
