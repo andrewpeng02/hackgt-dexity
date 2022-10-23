@@ -35,7 +35,7 @@ app.listen(port, () => {
 const config = new Configuration({
   basePath: PlaidEnvironments.sandbox,
   baseOptions: {
-    headers: {
+    headers: {  
       "PLAID-CLIENT-ID": process.env.PLAID_CLIENT_ID,
       "PLAID-SECRET": process.env.PLAID_SECRET,
     },
