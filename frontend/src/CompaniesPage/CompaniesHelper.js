@@ -9,12 +9,12 @@
 function getCompanyDetails(givenData) {
     let output = []
     for (let i of givenData["ownedStocks"]) {
-        output.push({"name":i["tickerID"]["name"],
-                "ticker":i["tickerID"]["ticker"],
-                "capital":(i["tickerID"]["price"] * i["amount"]),
+        output.push({"name":i["tickerId"]["name"],
+                "ticker":i["tickerId"]["ticker"],
+                "capital":(i["tickerId"]["price"] * i["amount"]),
                 "date":null,
-                "percentDayChange":i["tickerID"]["percentDayBefore"],
-                "percentMonthChange":i["tickerID"]["percentMonthBefore"],
+                "percentDayChange":i["tickerId"]["percentDayBefore"],
+                "percentMonthChange":i["tickerId"]["percentMonthBefore"],
                 "totalGrowth":null
         })
     }

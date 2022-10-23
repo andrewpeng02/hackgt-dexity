@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -13,7 +14,7 @@ import { auth } from "../firebase";
 
 import { Header } from "../OverviewPage/OverviewPage";
 
-const data = [
+const dataex = [
   { name: "Q3 2021", price: 30 },
   { name: "Q4 2021", price: 70 },
   { name: "Q1 2022", price: 65 },
@@ -39,8 +40,26 @@ const BiggestCompaniesTile = ({ name, price }) => (
 
 const CompaniesPage = () => {
   const [user, loading] = useAuthState(auth);
+  const [data, setData] = useState(null);
 
-  if (loading) return <p>Loading</p>;
+  useEffect(() => {
+    async function inner() {
+      const idToken = await auth.currentUser.getIdToken(true);
+
+      const r = await fetch("/test", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${idToken}`,
+        },
+      });
+      const j = await r.json();
+      setData(j);
+    }
+    inner();
+  }, []);
+
+  if (loading || !data) return <p>Loading</p>;
 
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
@@ -50,7 +69,7 @@ const CompaniesPage = () => {
           <h2 className="font-semibold text-[24px] m-4">Total Stock Growth</h2>
           <ResponsiveContainer aspect={1.5} maxHeight={300}>
             <AreaChart
-              data={data}
+              data={dataex}
               margin={{
                 top: 10,
                 right: 30,

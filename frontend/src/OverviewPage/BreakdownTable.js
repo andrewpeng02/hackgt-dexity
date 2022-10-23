@@ -6,18 +6,13 @@ import SortIcon from "@mui/icons-material/ArrowDownward";
 
 const columns = [
   {
-    name: "SECTOR NAME",
+    name: "COMPANY NAME",
     selector: "name",
     sortable: true,
   },
   {
     name: "CAPITAL ($)",
     selector: "capital",
-    sortable: true,
-  },
-  {
-    name: "BIGGEST COMPANY",
-    selector: "biggestCompany",
     sortable: true,
   },
 ];
@@ -36,7 +31,7 @@ const customStyles = {
       paddingRight: "8px",
       fontFamily: "Avenir Next",
       fontStyle: "semibold",
-      fontSize: "11px",
+      fontSize: "15px",
     },
   },
   cells: {
@@ -44,11 +39,12 @@ const customStyles = {
       paddingLeft: "8px", // override the cell padding for data cells
       paddingRight: "8px",
       fontFamily: "Avenir Next",
+      fontSize: "15px",
     },
   },
 };
 
-function SectorTable({ data }) {
+function BreakdownTable({ data }) {
   return (
     <div>
       <DataTable
@@ -63,4 +59,4 @@ function SectorTable({ data }) {
   );
 }
 
-export default SectorTable;
+export default BreakdownTable;
