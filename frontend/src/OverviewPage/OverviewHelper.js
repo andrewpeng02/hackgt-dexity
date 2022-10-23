@@ -8,81 +8,68 @@
 /* eslint-disable dot-notation */
 /* eslint-disable no-restricted-syntax */
 function getSectorBreakdowns(givenData) {
-  return givenData["categoryWeights"];
+    return givenData["categoryWeights"]
 }
 
 function getSectorDetails(givenData) {
-  let categories = [];
-  for (let category of givenData["categoryWeights"]) {
-    categories.push(category);
-  }
-
-  let output = [];
-  for (let i of givenData["ownedStocks"]) {
-    let category = i["tickerId"]["category"];
-    if (categories.includes(category)) {
-      for (let item of output) {
-        if (item["category"] === category) {
-          let amount1 = i["tickerId"]["price"] * i["amount"];
-          item["capital"] += amount1;
-          if (item["bigAmount"] < amount1) {
-            item["biggestCompany"] = i["tickerId"]["name"];
-            item["bigAmount"] = amount1;
-          } else {
-            categories.push(category);
-            let amount = i["tickerId"]["price"] * i["amount"];
-            output.push({
-              name: category,
-              capital: amount,
-              biggestCompany: i["tickerId"]["name"],
-              bigAmount: amount,
-            });
-          }
-        }
-      }
+    let categories = []
+    for (let category of givenData["categoryWeights"]) {
+        categories.push(category)
     }
-  }
-  //Sort and Map
+    let output = []
+    for (let i of givenData["ownedStocks"]) {
+        let category = i["tickerID"]["category"]
+        if (categories.includes(category)) {
+            for (let item of output) {
+                if (item["category"] === category) {
+                    let amount1 = (i["tickerID"]["price"] * i["amount"])
+                    item["capital"] += amount1
+                    if (item["bigAmount"] < amount1) {
+                        item["biggestCompany"] = i["tickerID"]["name"]
+                        item["bigAmount"] = amount1
+                    } else {
+                        categories.push(category)
+                        let amount = (i["tickerID"]["price"] * i["amount"])
+                        output.push({"name":category, "capital":amount, "biggestCompany":i["tickerID"]["name"], "bigAmount":amount})
+                    }
+                }
+            }
+        } 
+    }
+    //Sort and Map 
 
-  output.sort(function (a, b) {
-    return parseFloat(b["capital"]) - parseFloat(a["capital"]);
-  });
-  output.map((x) => ({
-    name: x["name"],
-    capital: x["capital"],
-    biggestCompany: x["biggestCompany"],
-  }));
-  return output;
+    output.sort(function(a, b) {
+        return parseFloat(b["capital"]) - parseFloat(a["capital"]);
+    })
+    output.map((x) => ({"name":x["name"], "capital":x["capital"], "biggestCompany":x["biggestCompany"]}))
+    return output
 }
 
 function getSectorInvestments(givenData) {
-  let categories = [];
-  for (let category of givenData["categoryWeights"]) {
-    categories.push(category);
-  }
-  let output = [];
-  let lists = [[], [], [], [], []];
-
-  for (let i of givenData["ownedStocks"]) {
-    let temp = categories.indexOf(i["tickerId"]["category"]);
-    if (temp >= 0) {
-      lists[temp].push({
-        name: i["tickerId"]["category"],
-        capital: i["tickerId"]["price"] * i["amount"],
-      });
+    let categories = []
+    for (let category of givenData["categoryWeights"]) {
+        categories.push(category)
     }
-  }
-  for (let i of lists) {
-    i.sort(function (a, b) {
-      return parseFloat(b["capital"]) - parseFloat(a["capital"]);
-    });
-    i = i.slice(2);
-  }
-  for (let i in categories) {
-    let category = categories[i]["category"];
-    output.push({ category, topComps: lists[i] });
-  }
-  return output;
+    let output = []
+    let lists = [[], [], [], [], []]
+
+    for (let i of givenData["ownedStocks"]) {
+        let temp = categories.indexOf(i["tickerID"]["category"])
+        if (temp >= 0) {
+            lists[temp].push({"name":i["tickerID"]["category"], "capital":(i["tickerID"]["price"] * i["amount"])})
+        }
+    }
+    for(let i of lists){
+        i.sort(function(a, b) {
+            return parseFloat(b["capital"]) - parseFloat(a["capital"]);
+        })
+        i = i.slice(2)
+    }
+    for (let i in categories) {
+        let category = categories[i]["category"]
+        output.push({"category":category, "topComps":lists[i]})
+    }
+    return output
 }
 
-export { getSectorBreakdowns, getSectorDetails, getSectorInvestments };
+export { getSectorBreakdowns, getSectorDetails, getSectorInvestments}

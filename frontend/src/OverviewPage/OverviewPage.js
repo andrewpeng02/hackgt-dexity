@@ -7,7 +7,11 @@ import { auth } from "../firebase";
 import PlaidLink from "../PlaidLink/PlaidLink";
 import SectorTable from "./SectorTable";
 import BreakdownTable from "./BreakdownTable";
-import { getSectorBreakdowns, getSectorDetails, getSectorInvestments } from "./OverviewHelper";
+import {
+  getSectorBreakdowns,
+  getSectorDetails,
+  getSectorInvestments,
+} from "./OverviewHelper";
 
 // eslint-disable-next-line no-unused-vars
 const isPlaidVerified = async () => {
@@ -104,11 +108,13 @@ const OverviewPage = () => {
   }, []);
 
   if (loading || loading2 || !data) return <p>Loading</p>;
-  const sectorBreakdowns = getSectorBreakdowns(data)[0];
+  console.log(data)
+  const sectorBreakdowns = getSectorBreakdowns(data);
+  console.log(sectorBreakdowns);
   const sectorDetails = getSectorDetails(data);
   console.log(sectorDetails);
   const sectorInvestments = getSectorInvestments(data);
-  console.log(sectorInvestments)
+  console.log(sectorInvestments);
 
   if (!plaidVerified)
     return <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />;
@@ -151,9 +157,9 @@ const OverviewPage = () => {
           <ResponsiveContainer aspect={2}>
             <PieChart width={300} height={300}>
               <Pie
-                data={Object.keys(sectorBreakdowns).map((k) => ({
-                  name: k,
-                  value: sectorBreakdowns[k],
+                data={sectorBreakdowns.map((s) => ({
+                  name: Object.keys(s)[0],
+                  value: s[Object.keys(s)[0]],
                 }))}
                 dataKey="value"
                 nameKey="name"

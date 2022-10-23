@@ -109,12 +109,13 @@ app.get("/test", async (req, res) => {
   return res.json({
     categoryWeights: [
       {
-        Technology: 0.2,
-        "Financial Services": 0.2,
-        Industrials: 0.2,
-        "Basic Materials": 0.2,
-        Energy: 0.2,
+        name: "Technology",
+        value: 0.2,
       },
+      { name: "Financial Services", value: 0.2 },
+      { name: "Industrials", value: 0.2 },
+      { name: "Basic Materials", value: 0.2 },
+      { name: "Energy", value: 0.2 },
     ],
     ownedStocks: [
       {
