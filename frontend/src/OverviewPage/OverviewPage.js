@@ -5,8 +5,13 @@ import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts";
 import { auth } from "../firebase";
 // eslint-disable-next-line import/no-cycle
 import PlaidLink from "../PlaidLink/PlaidLink";
-import SectorTable from "./SectorTable"
-import BreakdownTable from "./BreakdownTable"
+import SectorTable from "./SectorTable";
+import BreakdownTable from "./BreakdownTable";
+import {
+  getSectorBreakdowns,
+  getSectorDetails,
+  getSectorInvestments,
+} from "./OverviewHelper";
 
 // eslint-disable-next-line no-unused-vars
 const isPlaidVerified = async () => {
@@ -70,6 +75,7 @@ const OverviewPage = () => {
   const [plaidVerified, setPlaidVerified] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [refresh, setRefresh] = useState(false);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,10 +90,39 @@ const OverviewPage = () => {
     fetchData();
   }, [refresh]);
 
-  if (loading || loading2) return <p>Loading</p>;
+  useEffect(() => {
+    async function inner() {
+      const idToken = await auth.currentUser.getIdToken(true);
+
+      const r = await fetch("/test", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${idToken}`,
+        },
+      });
+      const j = await r.json();
+      setData(j);
+    }
+    inner();
+  }, []);
+
+  if (loading || loading2 || !data) return <p>Loading</p>;
+  const sectorBreakdowns = getSectorBreakdowns(data);
+  const sectorDetails = getSectorDetails(data);
+  const sectorInvestments = getSectorInvestments(data);
 
   if (!plaidVerified)
-    return <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />;
+    return (
+      <div className="flex justify-center items-center w-full">
+        <div className="flex-row items-center justify-center border-2 border-gray rounded-md p-5">
+          <h1 className="text-center font-semibold mb-2">
+            Link your bank account to Plaid
+          </h1>
+          <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />
+        </div>
+      </div>
+    );
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <Header user={user} text="Portfolio" />
@@ -124,16 +159,10 @@ const OverviewPage = () => {
           <p className="text-black font-semibold ml-[5%] pb-[25px]">
             Sector Breakdown
           </p>
-          <ResponsiveContainer aspect={2}>
+          <ResponsiveContainer aspect={1.5}>
             <PieChart width={300} height={300}>
               <Pie
-                data={[
-                  { name: "Utilities", value: 30 },
-                  { name: "Financials", value: 70 },
-                  { name: "Energy", value: 70 },
-                  { name: "Consumer Staples", value: 70 },
-                  { name: "Technology", value: 70 },
-                ]}
+                data={sectorBreakdowns}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -148,42 +177,52 @@ const OverviewPage = () => {
           </ResponsiveContainer>
         </div>
         <div className="bg-white mt-[15px] text-[20px] px-[4%] pt-[10px] w-[49%]">
-          <p className="text-black font-semibold ml-[0%] pb-[5px]">Sector Details</p>
+          <p className="text-black font-semibold ml-[0%] pb-[5px]">
+            Sector Details
+          </p>
           <div className="pb-[5%]">
-            <SectorTable />
+            <SectorTable data={sectorDetails} />
           </div>
         </div>
-    </div>
-    <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
-          <p className="text-black font-semibold ml-[0%] pb-[5px]">Sector Details</p>
-    </div>
-    <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+      </div>
+      <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
+        <p className="text-black font-semibold ml-[0%] pb-[5px]">
+          Sector Details
+        </p>
+      </div>
+      <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+        {sectorInvestments.slice(0, 3).map((i) => (
           <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-            <p >Consumer Staples</p>
-            <BreakdownTable />
+            <p>{i.category}</p>
+            <BreakdownTable data={i.topComps} />
           </div>
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-            <p>Financials</p>
-            <BreakdownTable />
-          </div>
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]" >
-            <p>Energy</p>
-            <BreakdownTable />
-          </div>
+        ))}
+        {/* <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Consumer Staples</p>
+          <BreakdownTable data={sectorInvestments[0]} />
+        </div>
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Financials</p>
+          <BreakdownTable data={sectorInvestments[1]} />
+        </div>
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Energy</p>
+          <BreakdownTable data={sectorInvestments[2]} />
+        </div> */}
+      </div>
+      <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>{sectorInvestments[3].category}</p>
+          <BreakdownTable data={sectorInvestments[3].topComps} />
+        </div>
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%] mr-[34%]">
+          <p>{sectorInvestments[4].category}</p>
+          <BreakdownTable data={sectorInvestments[4].topComps} />
+        </div>
+      </div>
     </div>
-    <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-            <p >Utilities</p>
-            <BreakdownTable />
-          </div>
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%] mr-[34%]">
-            <p>Technology</p>
-            <BreakdownTable />
-          </div>
-    </div>
-    </div>
-  )
-}
+  );
+};
 
-export { Header }
+export { Header };
 export default OverviewPage;

@@ -21,7 +21,11 @@ const PlaidLink = ({ setRefresh }) => {
   useEffect(() => {
     generateToken();
   }, []);
-  return linkToken != null ? <Link linkToken={linkToken} setRefresh={setRefresh} /> : <></>;
+  return linkToken != null ? (
+    <Link linkToken={linkToken} setRefresh={setRefresh} />
+  ) : (
+    <></>
+  );
 };
 // LINK COMPONENT
 // Use Plaid Link and pass link token and onSuccess function
@@ -53,7 +57,11 @@ const Link = (props) => {
   };
   const { open, ready } = usePlaidLink(config);
   return (
-    <button onClick={() => open()} disabled={!ready}>
+    <button
+      onClick={() => open()}
+      disabled={!ready}
+      className="border-none bg-green text-white px-6 py-4 h-14 rounded-md w-full"
+    >
       Link account
     </button>
   );
