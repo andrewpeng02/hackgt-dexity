@@ -19,6 +19,46 @@ const isPlaidVerified = async () => {
   return j.success;
 };
 
+const Header = ({ user, text }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  return (
+    <div className="relative fixed py-5 px-4 flex justify-between items-center bg-white">
+      <h2 className="font-semibold text-lg">{text}</h2>
+      <div>
+        <div className="relative inline-block">
+          <button
+            type="button"
+            className="border-none font-roboto text-black hover:text-zinc-600"
+            onClick={() => {
+              setShowDropdown((prev) => !prev);
+            }}
+          >
+            {user.email}
+          </button>
+          {showDropdown && (
+            <div
+              className="absolute bg-[#f1f1f1] min-w-[120px] z-10 hover:block
+                              px-3 py-3 right-0"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDropdown(false);
+                  auth.signOut();
+                }}
+                className="font-roboto text-md text-center w-full"
+              >
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const OverviewPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [user, loading] = useAuthState(auth);
@@ -26,7 +66,6 @@ const OverviewPage = () => {
   const [plaidVerified, setPlaidVerified] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [refresh, setRefresh] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,37 +86,7 @@ const OverviewPage = () => {
     return <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />;
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
-      <div className="relative fixed py-5 px-4 flex justify-between items-center bg-white">
-        <h2 className="font-semibold text-lg">Portfolio</h2>
-        <div>
-          <div className="relative inline-block">
-            <button
-              type="button"
-              className="border-none font-roboto text-black hover:text-zinc-600"
-              onClick={() => {
-                setShowDropdown((prev) => !prev);
-              }}
-            >
-              {user.email}
-            </button>
-            {showDropdown && (
-              <div className="absolute bg-[#f1f1f1] min-w-[120px] z-10 hover:block
-                              px-3 py-3 right-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowDropdown(false);
-                    auth.signOut();
-                  }}
-                  className="font-roboto text-md text-center w-full"
-                >
-                  Log out
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      <Header user={user} text="Portfolio" />
       <div className="items-center mt-[15px] overflow-visible">
         <div className="flex justify-between text-justify mx-[8%]">
           <div className="relative flex justify-between w-[334px] h-[95px] bg-darkBlue">
