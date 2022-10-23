@@ -12,7 +12,7 @@ function getCompanyDetails(givenData) {
     output.push({
       name: i["tickerId"]["name"],
       ticker: i["tickerId"]["ticker"],
-      capital: i["tickerId"]["price"] * i["amount"],
+      capital: (i["tickerId"]["price"] * i["amount"]).toLocaleString(),
       date: null,
       percentDayChange: i["tickerId"]["percentDayBefore"],
       percentMonthChange: i["tickerId"]["percentMonthBefore"],
@@ -29,7 +29,7 @@ function trimCompanies(givenData) {
   givenData = givenData.slice(0, 3);
   return givenData.map((x) => ({
     name: x["name"],
-    capital: x["capital"],
+    capital: (x["capital"]).toLocaleString(),
     percentDayChange: x["percentDayChange"],
   }));
 }

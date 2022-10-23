@@ -42,7 +42,7 @@ function getSectorDetails(givenData) {
 
   categories = categories.map((x) => ({
     name: x["category"],
-    capital: x["capital"],
+    capital: (x["capital"]).toLocaleString(),
     biggestCompany: x["biggestCompany"],
   }));
   return categories;
@@ -69,7 +69,10 @@ function getSectorInvestments(givenData) {
     i.sort(function (a, b) {
       return parseFloat(b["capital"]) - parseFloat(a["capital"]);
     });
-    i = i.slice(2);
+    i = i.slice(0, 3);
+    for (let j of i) {
+        j.capital = (j.capital).toLocaleString()
+    }
   }
   for (let i in categories) {
     let category = categories[i]["name"];
