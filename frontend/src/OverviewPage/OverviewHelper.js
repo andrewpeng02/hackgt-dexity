@@ -14,25 +14,17 @@ function getSectorBreakdowns(givenData) {
 function getSectorDetails(givenData) {
     let categories = []
     for (let category of givenData["categoryWeights"]) {
-        categories.push(category)
+        categories.push({"category":category.name, "capital":0, "biggestCompany":null, "bigAmount":-1})
     }
-    let output = []
     for (let i of givenData["ownedStocks"]) {
         let category = i["tickerID"]["category"]
-        if (categories.includes(category)) {
-            for (let item of output) {
-                if (item["category"] === category) {
-                    let amount1 = (i["tickerID"]["price"] * i["amount"])
-                    item["capital"] += amount1
-                    if (item["bigAmount"] < amount1) {
-                        item["biggestCompany"] = i["tickerID"]["name"]
-                        item["bigAmount"] = amount1
-                    } else {
-                        categories.push(category)
-                        let amount = (i["tickerID"]["price"] * i["amount"])
-                        output.push({"name":category, "capital":amount, "biggestCompany":i["tickerID"]["name"], "bigAmount":amount})
-                    }
-                }
+        let index = categories.indexOf(category)
+        if (index > -1) {
+            let amount = (i["tickerID"]["price"] * i["amount"])
+            categories[index]["capital"] += amount
+            if (categories[index]["bigAmount"] < amount) {
+                categories[index]["biggestCompany"] = i["tickerID"]["name"]
+                categories[index]["bigAmount"] = amount
             }
         } 
     }
