@@ -4,7 +4,8 @@ import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts";
 import { auth } from "../firebase";
 // eslint-disable-next-line import/no-cycle
 import PlaidLink from "../PlaidLink/PlaidLink";
-import SectorTable from "./SectorTable"
+import SectorTable from "./SectorTable";
+import StripeCheckout from "./StripeCheckout";
 
 // eslint-disable-next-line no-unused-vars
 const isPlaidVerified = async () => {
@@ -68,6 +69,7 @@ const OverviewPage = () => {
   const [plaidVerified, setPlaidVerified] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [refresh, setRefresh] = useState(false);
+  const [stripeBought, setStripeBought] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +84,21 @@ const OverviewPage = () => {
     fetchData();
   }, [refresh]);
 
+  useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = new URLSearchParams(window.location.search);
+
+    if (query.get("success")) {
+      setStripeBought(true);
+    }
+
+    // if (query.get("canceled")) {
+    //   setMessage(
+    //     "Order canceled -- continue to shop around and checkout when you're ready."
+    //   );
+    // }
+  }, []);
+
   if (loading || loading2) return <p>Loading</p>;
 
   if (!plaidVerified)
@@ -89,6 +106,7 @@ const OverviewPage = () => {
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <Header user={user} text="Portfolio" />
+      {!stripeBought && <StripeCheckout />}
       <div className="items-center mt-[15px] overflow-visible">
         <div className="flex justify-between text-justify mx-[8%]">
           <div className="relative flex justify-between w-[334px] h-[95px] bg-darkBlue">
@@ -146,15 +164,17 @@ const OverviewPage = () => {
           </ResponsiveContainer>
         </div>
         <div className="bg-white mt-[15px] text-[20px] px-[4%] pt-[10px] w-[49%]">
-          <p className="text-black font-semibold ml-[0%] pb-[5px]">Sector Details</p>
+          <p className="text-black font-semibold ml-[0%] pb-[5px]">
+            Sector Details
+          </p>
           <div className="pb-[5%]">
             <SectorTable />
           </div>
+        </div>
       </div>
     </div>
-    </div>
-  )
-}
+  );
+};
 
-export { Header }
+export { Header };
 export default OverviewPage;

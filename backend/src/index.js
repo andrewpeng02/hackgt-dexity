@@ -9,11 +9,16 @@ import { readFile } from "fs/promises";
 import { createUser } from "./utils/driver.js";
 import { User } from "./app/models.js";
 
+import Stripe from "stripe"
+
+
 envConfig();
+const stripe = new Stripe(process.env.STRIPE_API_KEY)
 
 const app = express();
 app.use(express.json());
 const port = 5000;
+
 
 mongoose
   .connect("mongodb://localhost:27017/dexity")
@@ -103,6 +108,23 @@ app.get("/me", async (req, res) => {
   }
 
   return res.json({ success: true });
+});
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: 'price_1LvxJ5BY8s9FlZMnsf9Ku6og',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `http://localhost:3000?success=true`,
+    cancel_url: `http://localhost:3000?canceled=true`,
+  });
+
+  res.redirect(303, session.url);
 });
 
 app.get("/test", async (req, res) => {
