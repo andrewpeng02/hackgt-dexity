@@ -106,7 +106,7 @@ app.get("/me", async (req, res) => {
 });
 
 app.get("/test", async (req, res) => {
-  return {
+  return res.json({
     categoryWeights: [
       {
         Technology: 0.2,
@@ -184,5 +184,5 @@ app.get("/test", async (req, res) => {
         },
       },
     ],
-  };
+  });
 });

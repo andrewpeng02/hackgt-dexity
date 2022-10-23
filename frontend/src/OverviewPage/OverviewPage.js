@@ -5,8 +5,9 @@ import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts";
 import { auth } from "../firebase";
 // eslint-disable-next-line import/no-cycle
 import PlaidLink from "../PlaidLink/PlaidLink";
-import SectorTable from "./SectorTable"
-import BreakdownTable from "./BreakdownTable"
+import SectorTable from "./SectorTable";
+import BreakdownTable from "./BreakdownTable";
+import { getSectorBreakdowns, getSectorDetails, getSectorInvestments } from "./OverviewHelper";
 
 // eslint-disable-next-line no-unused-vars
 const isPlaidVerified = async () => {
@@ -70,6 +71,7 @@ const OverviewPage = () => {
   const [plaidVerified, setPlaidVerified] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [refresh, setRefresh] = useState(false);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +86,29 @@ const OverviewPage = () => {
     fetchData();
   }, [refresh]);
 
-  if (loading || loading2) return <p>Loading</p>;
+  useEffect(() => {
+    async function inner() {
+      const idToken = await auth.currentUser.getIdToken(true);
+
+      const r = await fetch("/test", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${idToken}`,
+        },
+      });
+      const j = await r.json();
+      setData(j);
+    }
+    inner();
+  }, []);
+
+  if (loading || loading2 || !data) return <p>Loading</p>;
+  const sectorBreakdowns = getSectorBreakdowns(data)[0];
+  const sectorDetails = getSectorDetails(data);
+  console.log(sectorDetails);
+  const sectorInvestments = getSectorInvestments(data);
+  console.log(sectorInvestments)
 
   if (!plaidVerified)
     return <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />;
@@ -127,13 +151,10 @@ const OverviewPage = () => {
           <ResponsiveContainer aspect={2}>
             <PieChart width={300} height={300}>
               <Pie
-                data={[
-                  { name: "Utilities", value: 30 },
-                  { name: "Financials", value: 70 },
-                  { name: "Energy", value: 70 },
-                  { name: "Consumer Staples", value: 70 },
-                  { name: "Technology", value: 70 },
-                ]}
+                data={Object.keys(sectorBreakdowns).map((k) => ({
+                  name: k,
+                  value: sectorBreakdowns[k],
+                }))}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -148,42 +169,46 @@ const OverviewPage = () => {
           </ResponsiveContainer>
         </div>
         <div className="bg-white mt-[15px] text-[20px] px-[4%] pt-[10px] w-[49%]">
-          <p className="text-black font-semibold ml-[0%] pb-[5px]">Sector Details</p>
+          <p className="text-black font-semibold ml-[0%] pb-[5px]">
+            Sector Details
+          </p>
           <div className="pb-[5%]">
             <SectorTable />
           </div>
         </div>
+      </div>
+      <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
+        <p className="text-black font-semibold ml-[0%] pb-[5px]">
+          Sector Details
+        </p>
+      </div>
+      <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Consumer Staples</p>
+          <BreakdownTable />
+        </div>
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Financials</p>
+          <BreakdownTable />
+        </div>
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Energy</p>
+          <BreakdownTable />
+        </div>
+      </div>
+      <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+          <p>Utilities</p>
+          <BreakdownTable />
+        </div>
+        <div className="bg-white pb-[3%] pt-[10px] px-[2%] mr-[34%]">
+          <p>Technology</p>
+          <BreakdownTable />
+        </div>
+      </div>
     </div>
-    <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
-          <p className="text-black font-semibold ml-[0%] pb-[5px]">Sector Details</p>
-    </div>
-    <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-            <p >Consumer Staples</p>
-            <BreakdownTable />
-          </div>
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-            <p>Financials</p>
-            <BreakdownTable />
-          </div>
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]" >
-            <p>Energy</p>
-            <BreakdownTable />
-          </div>
-    </div>
-    <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
-            <p >Utilities</p>
-            <BreakdownTable />
-          </div>
-          <div className="bg-white pb-[3%] pt-[10px] px-[2%] mr-[34%]">
-            <p>Technology</p>
-            <BreakdownTable />
-          </div>
-    </div>
-    </div>
-  )
-}
+  );
+};
 
-export { Header }
+export { Header };
 export default OverviewPage;
