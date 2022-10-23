@@ -1,6 +1,6 @@
 import fetch from "node-fetch"
 
-const sampleResponse = {
+/*const sampleResponse = {
     "accounts": [
         {
             "account_id": "BxBXxLj1m4HMXBm9WZZmCWVbPjX16EHwv99vp",
@@ -86,11 +86,11 @@ const sampleResponse = {
     },
     "total_transactions": 1,
     "request_id": "45QSn"
-}
+}*/
   
-    getTransacData(sampleResponse).then((value) => {
+    /*getTransacData(sampleResponse).then((value) => {
         console.log(value);
-    })
+    })*/
   
     async function getTransacData(response) {
         let merchantToDollars = []
