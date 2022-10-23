@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts";
@@ -5,6 +6,7 @@ import { auth } from "../firebase";
 // eslint-disable-next-line import/no-cycle
 import PlaidLink from "../PlaidLink/PlaidLink";
 import SectorTable from "./SectorTable"
+import BreakdownTable from "./BreakdownTable"
 
 // eslint-disable-next-line no-unused-vars
 const isPlaidVerified = async () => {
@@ -89,7 +91,7 @@ const OverviewPage = () => {
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <Header user={user} text="Portfolio" />
-      <div className="items-center mt-[15px] overflow-visible">
+      <div className="items-center mt-[4%] overflow-visible">
         <div className="flex justify-between text-justify mx-[8%]">
           <div className="relative flex justify-between w-[334px] h-[95px] bg-darkBlue">
             <p className="text-white font-semibold text-[20px] px-[25px] pt-[20px]">
@@ -150,7 +152,34 @@ const OverviewPage = () => {
           <div className="pb-[5%]">
             <SectorTable />
           </div>
-      </div>
+        </div>
+    </div>
+    <div className="mt-[15px] text-[28px] pt-[10px] mx-[8%]">
+          <p className="text-black font-semibold ml-[0%] pb-[5px]">Sector Details</p>
+    </div>
+    <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+            <p >Consumer Staples</p>
+            <BreakdownTable />
+          </div>
+          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+            <p>Financials</p>
+            <BreakdownTable />
+          </div>
+          <div className="bg-white pb-[3%] pt-[10px] px-[2%]" >
+            <p>Energy</p>
+            <BreakdownTable />
+          </div>
+    </div>
+    <div className="flex font-semibold justify-between text-[23px] pt-[2px] mx-[8%] mb-[3%]">
+          <div className="bg-white pb-[3%] pt-[10px] px-[2%]">
+            <p >Utilities</p>
+            <BreakdownTable />
+          </div>
+          <div className="bg-white pb-[3%] pt-[10px] px-[2%] mr-[34%]">
+            <p>Technology</p>
+            <BreakdownTable />
+          </div>
     </div>
     </div>
   )
