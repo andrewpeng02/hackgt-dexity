@@ -30,11 +30,11 @@ function getSectorDetails(givenData) {
     }
     //Sort and Map 
 
-    output.sort(function(a, b) {
+    categories.sort(function(a, b) {
         return parseFloat(b["capital"]) - parseFloat(a["capital"]);
     })
-    output.map((x) => ({"name":x["name"], "capital":x["capital"], "biggestCompany":x["biggestCompany"]}))
-    return output
+    categories.map((x) => ({"name":x["name"], "capital":x["capital"], "biggestCompany":x["biggestCompany"]}))
+    return categories
 }
 
 function getSectorInvestments(givenData) {
