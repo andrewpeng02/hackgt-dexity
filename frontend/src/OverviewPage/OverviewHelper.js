@@ -64,5 +64,4 @@ function getSectorInvestments(givenData) {
     return output
 }
 
-
-
+export { getSectorBreakdowns, getSectorDetails, getSectorInvestments}
