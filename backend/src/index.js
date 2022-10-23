@@ -110,6 +110,38 @@ app.get("/me", async (req, res) => {
   return res.json({ success: true });
 });
 
+app.get("/mestripe", async (req, res) => {
+  const idToken = req.get("Authorization").substring(7);
+  const uid = await assertAuthenticated(idToken);
+  if (!uid) {
+    return res.json({ success: false });
+  }
+
+  const existingUser = await User.findOne({ firebaseId: uid });
+  if (!existingUser || !existingUser.stripe) {
+    return res.json({ success: false });
+  }
+
+  return res.json({ success: true });
+});
+
+app.get("/stripedone", async (req, res) => {
+  const idToken = req.get("Authorization").substring(7);
+  const uid = await assertAuthenticated(idToken);
+  if (!uid) {
+    return res.json({ success: false });
+  }
+
+  const existingUser = await User.findOne({ firebaseId: uid });
+  if (!existingUser) {
+    return res.json({ success: false });
+  }
+  existingUser.stripe = true;
+  await existingUser.save();
+
+  return res.json({ success: true });
+});
+
 app.post('/create-checkout-session', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: [

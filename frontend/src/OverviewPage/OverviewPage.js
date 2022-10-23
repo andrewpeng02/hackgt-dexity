@@ -7,10 +7,23 @@ import PlaidLink from "../PlaidLink/PlaidLink";
 import SectorTable from "./SectorTable";
 import StripeCheckout from "./StripeCheckout";
 
-// eslint-disable-next-line no-unused-vars
 const isPlaidVerified = async () => {
   const idToken = await auth.currentUser.getIdToken(true);
   const res = await fetch("/me", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `bearer ${idToken}`,
+    },
+  });
+  const j = await res.json();
+
+  return j.success;
+};
+
+const isStripeVerified = async () => {
+  const idToken = await auth.currentUser.getIdToken(true);
+  const res = await fetch("/mestripe", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -78,6 +91,9 @@ const OverviewPage = () => {
       const res = await isPlaidVerified();
       setPlaidVerified(res);
 
+      const res2 = await isStripeVerified();
+      setStripeBought(res2);
+
       setLoading2(false);
       setRefresh(false);
     };
@@ -85,12 +101,25 @@ const OverviewPage = () => {
   }, [refresh]);
 
   useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const query = new URLSearchParams(window.location.search);
+    async function inner() {
+      const idToken = await auth.currentUser.getIdToken(true);
 
-    if (query.get("success")) {
-      setStripeBought(true);
+      // Check to see if this is a redirect back from Checkout
+      const query = new URLSearchParams(window.location.search);
+
+      if (query.get("success")) {
+        await fetch("/stripedone", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `bearer ${idToken}`,
+          },
+        });
+
+        setStripeBought(true);
+      }
     }
+    inner();
 
     // if (query.get("canceled")) {
     //   setMessage(

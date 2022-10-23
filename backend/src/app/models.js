@@ -3,6 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const userSchema = new mongoose.Schema({
   firebaseId: String,
   accessToken: String,
+  stripe: { type: Boolean, default: false },
   categoryWeights: [{ name: Number }],
   ownedStocks: [
     { tickerId: { type: Schema.Types.ObjectId, ref: "Stock" }, amount: Number },
