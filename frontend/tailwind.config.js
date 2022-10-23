@@ -10,7 +10,7 @@ module.exports = {
         gray: "rgba(224, 231, 240, 1)",
       },
       fontFamily: {
-        sans: ["Avenir", "Helvetica", "Arial", "sans-serif"],
+        sans: ["Avenir Next", "Helvetica", "Arial", "sans-serif"],
         roboto: ["Roboto", "Helvetica", "Arial", "sans-serif"],
       },
       backgroundImage: {
