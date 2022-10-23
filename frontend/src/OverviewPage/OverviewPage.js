@@ -1,26 +1,8 @@
-<<<<<<< HEAD
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts"
 import { auth } from "../firebase";
-import PlaidLink from "../PlaidLink/PlaidLink";
-
-
-const OverviewPage = () => {
-  // useEffect(() => {
-  //   auth.signOut();
-  // }, []);
-  const isPlaidNeeded = false;
-  if (isPlaidNeeded) {
-    return <PlaidLink />;
-  }
-  // eslint-disable-next-line no-unused-vars
-  const [user, loading] = useAuthState(auth)
-=======
-import React, { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { PieChart, Pie, Tooltip } from "recharts";
-import { auth } from "../firebase";
+// eslint-disable-next-line import/no-cycle
 import PlaidLink from "../PlaidLink/PlaidLink";
 
 const isPlaidVerified = async () => {
@@ -36,7 +18,6 @@ const isPlaidVerified = async () => {
 
   return j.success;
 };
-export { isPlaidVerified }
 
 const OverviewPage = () => {
   // eslint-disable-next-line no-unused-vars
@@ -61,7 +42,7 @@ const OverviewPage = () => {
 
   if (loading || loading2) return <p>Loading</p>;
 
-  if (!plaidVerified) return <PlaidLink setPlaidVerified={setPlaidVerified} />;
+  if (!plaidVerified) return <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />;
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <div className="relative fixed py-5 px-4 flex justify-between items-center bg-white">

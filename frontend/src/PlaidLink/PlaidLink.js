@@ -2,10 +2,8 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { usePlaidLink } from "react-plaid-link";
 import { auth } from "../firebase";
-// eslint-disable-next-line import/no-cycle
-import { isPlaidVerified } from "../OverviewPage/OverviewPage";
 
-const PlaidLink = ({ setPlaidVerified }) => {
+const PlaidLink = ({ setRefresh, setLoading2 }) => {
   const [token, setToken] = useState(null);
   const [, setData] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
@@ -32,6 +30,7 @@ const PlaidLink = ({ setPlaidVerified }) => {
   const onSuccess = useCallback(
     async (publicToken) => {
       setLoading(true);
+      setLoading2(true);
       console.log(publicToken);
 
       const idToken = await auth.currentUser.getIdToken(true);
@@ -47,11 +46,11 @@ const PlaidLink = ({ setPlaidVerified }) => {
       });
       const aT = await response.json();
       console.log("from App: ", aT);
+
+      setRefresh(true); // move to end of function later
+
       setAccessToken(aT);
       await getTransactions();
-
-      console.log("set refresh")
-      setPlaidVerified(await isPlaidVerified());
     },
     [setAccessToken, getTransactions]
   );
