@@ -1,22 +1,21 @@
 import { User } from "../app/models.js";
-import { getTransactionData } from "./plaidApiUtils.js";
 
-const createUser = async (uid, accessToken) => {
+const upsertUser = async (uid, accessToken, ownedStocks) => {
   const existingUser = await User.findOne({ firebaseId: uid });
   if (existingUser) {
     console.log("User already exists");
+    existingUser.ownedStocks = ownedStocks;
+    await existingUser.save();
     return;
   }
-
-  await getTransactionData(accessToken);
 
   const newUser = new User({
     firebaseId: uid,
     accessToken,
     categoryWeights: undefined,
-    ownedStocks: undefined,
+    ownedStocks: ownedStocks,
   });
   await newUser.save();
 };
 
-export { createUser };
+export { upsertUser };

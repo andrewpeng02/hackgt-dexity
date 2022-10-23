@@ -1,4 +1,6 @@
 import fetch from "node-fetch"
+import csv from "csv-parser"
+import fs from "fs"
 
 /*const sampleResponse = {
     "accounts": [
@@ -91,68 +93,83 @@ import fetch from "node-fetch"
     /*getTransacData(sampleResponse).then((value) => {
         console.log(value);
     })*/
-  
-    async function getTransacData(response) {
-        let merchantToDollars = []
-        let transactions = response["transactions"]
-        let category
-        let ticker
-        for (let x in transactions) {
-            let transac = transactions[x]
-            let response2 = await fetch("https://api.sec-api.io/mapping/name/" + transac.merchant_name + "?token=70d25ca5879d3667a2004fe79b97e51e02add7e9313af187b3fb4906c7572165")
-            let data = await response2.json()
-            data = data[0]
-            category = data["sector"]
-            ticker = data["ticker"]
-            let doesHave
-            for(let x in merchantToDollars) {
-                if (merchantToDollars[x]["ticker"].equals(ticker)) {
-                    merchantToDollars[x]["amount"] += transac.amount
-                    doesHave = true
-                }
-            }
-            if (!doesHave) {
-              merchantToDollars.push({"ticker":ticker, "category":category, "name":transac.merchant_name, "amount":transac.amount})
+
+function getCSVData() {
+    let csvData = [];
+    return new Promise((resolve) => {
+        fs.createReadStream('src/res/nasdaq.csv')
+            .pipe(csv())
+            .on('data', (data) => csvData.push(data))
+            .on('end', () => resolve(csvData));
+    })
+}
+
+export async function getOwnedStockData(response) {
+    let transactions = response.transactions
+    const csvData = await getCSVData();
+    const ownedStockDataObject = {}
+    
+    console.log(transactions.length)
+    console.log(csvData.length)
+    for (const transaction of transactions) {
+        // console.log(transaction)
+        const ownedStockDatum = {};
+        const matchingString = transaction.merchant_name
+        for (const csvDatum of csvData) {
+            //console.log("csv", csvDatum.length)
+            //console.log("blah", csvDatum, matchingString);
+            if ((` ${csvDatum.Name} `).indexOf(` ${matchingString} `) != -1) {
+                console.log(matchingString + " Matched with a NASDAQ Company")
+                ownedStockDatum.ticker = csvDatum.Symbol
+                ownedStockDatum.category = csvDatum.Sector
+                break;
             }
         }
-        return getStockData(merchantToDollars)
+        if (!ownedStockDatum.ticker) {
+            continue;
+        }
+        if (ownedStockDataObject[ownedStockDatum.ticker]) {
+            ownedStockDataObject[ownedStockDatum.ticker].amount += transaction.amount;
+            continue;
+        }
+        ownedStockDatum.name = transaction.merchant_name;
+        ownedStockDatum.amount = transaction.amount;
+
+        const todaysDate = new Date().toJSON().slice(0, 10)
+        let monthDate = new Date();
+        monthDate.setMonth(monthDate.getMonth() - 1);
+
+        // const URL = `https://data.nasdaq.com/api/v3/datasets/WIKI/${ownedStockDatum.ticker}/data.json?api_key=AnS6v5PkzHb8LLFnMYhJ&start_date=${monthDate}&end_date=${todaysDate}`
+        const monthlyURL = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${ownedStockDatum.ticker}&apikey=FJW7OJZ1KVSNW6VJ`
+        const dailyURL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${ownedStockDatum.ticker}&apikey=FJW7OJZ1KVSNW6VJ`
+
+
+        try {
+            let dailyResponse = await fetch(dailyURL)
+            dailyResponse = await dailyResponse.json()
+            dailyResponse = dailyResponse['Time Series (Daily)']
+            dailyResponse = Object.values(dailyResponse)
+            console.log("Daily Response: ", dailyResponse)
+
+            let monthlyResponse = await fetch(monthlyURL)
+            monthlyResponse = await monthlyResponse.json()
+            monthlyResponse = monthlyResponse['Monthly Time Series']
+            monthlyResponse = Object.values(monthlyResponse)
+            console.log("Monthly Response: ", monthlyResponse)
+
+            const openingToday = Object.values(dailyResponse[0])[0] //get today's opening price
+            const openingYesterday = Object.values(dailyResponse[1])[0] //get yesterday's opening price
+            const openingMonthOld = Object.values(monthlyResponse[1])[0] //get the oldest response (1 month old) and get the open price
+
+            ownedStockDatum.price = openingToday
+            ownedStockDatum.percentDayBefore = Math.round(openingYesterday/openingToday * 10000.0) / 100.0
+            ownedStockDatum.percentMonthBefore = Math.round(openingMonthOld/openingToday * 10000.0) / 100.0
+        } catch (error) {
+            console.log("ERROR for ticker ", ownedStockDatum.ticker, error)
+            continue;
+        }
+        ownedStockDataObject[ownedStockDatum.ticker] = ownedStockDatum;
     }
-  
-async function getStockData(inputs) {
-    let totalOutput = []
-    let response
-    let data
-    let data2
-    let data3
-    const API_KEY = "ad437953e6e888808a7a29140dcf2ab7"
-    for (let input in inputs) {
-        input = inputs[input]
-        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${input["ticker"]}`)
-        data = await response.json()
-      
-        let dateObj = new Date();
-        let currDate = dateObj.toJSON().slice(0,10)
-        dateObj.setDate(dateObj.getDate() - 2)
-        let yesterdayDate = dateObj.toJSON().slice(0,10)
-        dateObj.setDate(dateObj.getDate() - 29)
-        let monthBefore = dateObj.toJSON().slice(0,10)
-      
-        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${input["ticker"]}&date_from=${yesterdayDate}&date_to=${currDate}`)
-        data2 = await response.json()
-  
-        response = await fetch(`http://api.marketstack.com/v1/eod?access_key=${API_KEY}&symbols=${input["ticker"]}&date_from=${monthBefore}&date_to=${currDate}`)
-        data3 = await response.json()
-    
-        let currData = data["data"][0]["close"]
-        let yestData = data2["data"][data2["data"].length - 1]["close"]
-        let monthData = data3["data"][data3["data"].length - 1]["close"]
-  
-        let yestPercent = Math.round(yestData/currData * 10000.0) / 100.0
-        let monthPercent = Math.round(monthData/currData * 10000.0) / 100.0
-  
-        totalOutput.push({"ticker":input["ticker"], "category":input["category"], "name":input["name"], "amount":input["amount"],
-                            "currentPrice":currData, "yesterdayPercent":yestPercent, "monthPercent":monthPercent})
-    }
-      
-    return totalOutput
+    console.log(ownedStockDataObject);
+    return Object.values(ownedStockDataObject);
 }
