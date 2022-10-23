@@ -108,7 +108,7 @@ const OverviewPage = () => {
   }, []);
 
   if (loading || loading2 || !data) return <p>Loading</p>;
-  console.log(data)
+  console.log(data);
   const sectorBreakdowns = getSectorBreakdowns(data);
   console.log(sectorBreakdowns);
   const sectorDetails = getSectorDetails(data);
@@ -117,7 +117,14 @@ const OverviewPage = () => {
   console.log(sectorInvestments);
 
   if (!plaidVerified)
-    return <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />;
+    return (
+      <div className="flex justify-center items-center w-full">
+        <div className="flex-row items-center justify-center border-2 border-gray rounded-md p-5">
+          <h1 className="text-center font-semibold mb-2">Link your bank account to Plaid</h1>
+          <PlaidLink setRefresh={setRefresh} setLoading2={setLoading2} />
+        </div>
+      </div>
+    );
   return (
     <div className="bg-[#F7F8FC] w-[100%] overflow-y-scroll">
       <Header user={user} text="Portfolio" />
@@ -154,13 +161,10 @@ const OverviewPage = () => {
           <p className="text-black font-semibold ml-[5%] pb-[25px]">
             Sector Breakdown
           </p>
-          <ResponsiveContainer aspect={2}>
+          <ResponsiveContainer aspect={1.5}>
             <PieChart width={300} height={300}>
               <Pie
-                data={sectorBreakdowns.map((s) => ({
-                  name: Object.keys(s)[0],
-                  value: s[Object.keys(s)[0]],
-                }))}
+                data={sectorBreakdowns}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"

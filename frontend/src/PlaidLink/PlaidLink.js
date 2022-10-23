@@ -60,7 +60,7 @@ const Link = (props) => {
     <button
       onClick={() => open()}
       disabled={!ready}
-      className="border-none bg-green text-white px-6 py-4"
+      className="border-none bg-green text-white px-6 py-4 h-14 rounded-md w-full"
     >
       Link account
     </button>
